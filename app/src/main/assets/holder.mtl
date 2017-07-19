@@ -1,0 +1,12 @@
+# Blender MTL File: 'holder.blend'
+# Material Count: 1
+
+newmtl Material.002
+Ns 562.745098
+Ka 1.000000 1.000000 1.000000
+Kd 0.400963 0.421079 0.447680
+Ks 0.230337 0.230337 0.230337
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2

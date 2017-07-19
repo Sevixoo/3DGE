@@ -81,4 +81,9 @@ public class GLSLShader {
         int mHandle = GLES20.glGetUniformLocation(mProgram, name);
         GLES20.glUniform4fv(mHandle, 1, matrix, 0);
     }
+
+    public void bindUniform3fv(String name, float[] matrix) {
+        int mHandle = GLES20.glGetUniformLocation(mProgram, name);
+        GLES20.glUniform3fv(mHandle, 1, matrix, 0);
+    }
 }

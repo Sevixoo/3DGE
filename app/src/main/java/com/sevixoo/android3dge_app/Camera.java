@@ -22,7 +22,16 @@ public class Camera {
     }
 
     public void setProjection(float left, float right, float bottom, float top){
-        Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top , 3, 10000);
+        Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top , 900, 1000);
+    }
+
+    public void setOrthoProjection(int width, float height){
+        setOrthoProjection(width,height,1);
+    }
+
+    public void setOrthoProjection(int width, float height, float s){
+        float aspectRatio = (float) width / (float) height;
+        Matrix.orthoM(mProjectionMatrix, 0, -aspectRatio * s, aspectRatio * s, -1 * s, 1 * s, 1, 20);
     }
 
     public void setPosition(float x, float y, float z){
@@ -48,5 +57,9 @@ public class Camera {
 
     float[] getViewMatrix() {
         return mViewMatrix;
+    }
+
+    public float[] getPosition() {
+        return mPosition;
     }
 }

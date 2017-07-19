@@ -37,7 +37,7 @@ public class World {
     public void display() {
         float[] vpMatrix = getVPMatrix();
         for (Object3D object3D : mObject3DList) {
-            object3D.draw(vpMatrix);
+            object3D.draw(vpMatrix,mCamera.getPosition());
         }
     }
 
@@ -45,7 +45,7 @@ public class World {
         frameBuffer.bind();
         float[] vpMatrix = getVPMatrix();
         for (Object3D object3D : mObject3DList) {
-            object3D.draw(vpMatrix);
+            object3D.draw(vpMatrix,mCamera.getPosition());
         }
         frameBuffer.unbind();
 

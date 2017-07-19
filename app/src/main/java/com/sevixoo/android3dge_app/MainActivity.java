@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.LinearLayout;
 
@@ -28,6 +29,7 @@ public class MainActivity extends Activity {
     private GLSLShader mColorGLSLShader;
     private GLSLShader mRendererShader;
     private GLSLShader mGscaleShader;
+    private GLSLShader mLightShader;
 
     private World mWorld;
     private FrameBuffer mFrameBuffer;
@@ -70,7 +72,7 @@ public class MainActivity extends Activity {
 
         try {
 
-            mBananaObject = mLoader.loadObj("cube2.obj");
+            mBananaObject = mLoader.loadObj("holder.obj");
 
             mDefGLSLShader = new GLSLShader(
                     mLoader.loadFile("def.vert"),
@@ -88,16 +90,22 @@ public class MainActivity extends Activity {
                     mLoader.loadFile("grey_scale.vert"),
                     mLoader.loadFile("grey_scale.frag")
             );
+            mLightShader =  new GLSLShader(
+                    mLoader.loadFile("light_shader.vert"),
+                    mLoader.loadFile("light_shader.frag")
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mBananaObject.setGLSLShader(mDefGLSLShader);
+        mBananaObject.setColor(255,0,0);
+        mBananaObject.setGLSLShader(mColorGLSLShader);
         mScaledObject3D.setGLSLShader(mColorGLSLShader);
         mObject3D.setGLSLShader(mDefGLSLShader);
         //mWorld.add(mScaledObject3D);
         //mWorld.add(mObject3D);
         mWorld.add(mBananaObject);
+        mBananaObject.rotateX(90f);
     }
 
     @Override
@@ -123,9 +131,15 @@ public class MainActivity extends Activity {
             public void onSurfaceChanged(GL10 gl, int width, int height) {
                 Log.e("onSurfaceChanged", "width=" + width + ",height=" + height);
                 GLES20.glViewport(0, 0, width, height);
-                mWorld.getCamera().setProjection(0,width,height,0);
+                //mWorld.getCamera().setProjection(0,width,height,0);
+
+                //float ratio = (float) width / height;
+                //mWorld.getCamera().setProjection(-ratio,ratio,-1,1);
+
+                mWorld.getCamera().setOrthoProjection(width,height,10);
+
                 mScreen = new ScreenRenderer();
-                mWorld.getCamera().setPosition(0,0,3);
+                mWorld.getCamera().setPosition(0,0,10);
                 mWorld.getCamera().lookAt(0,0,0);
                 mFrameBuffer = new FrameBuffer(width,height);
                 mFrameBuffer2 = new FrameBuffer(width,height);
@@ -133,6 +147,11 @@ public class MainActivity extends Activity {
 
             @Override
             public void onDrawFrame(GL10 gl) {
+
+                //long time = SystemClock.uptimeMillis() % 4000L;
+                //float angle = 0.090f * ((int) time);
+                //mBananaObject.rotateX(angle);
+
                 mScreen.clearColor();
                 mWorld.display();
                 //mWorld.draw(mFrameBuffer);

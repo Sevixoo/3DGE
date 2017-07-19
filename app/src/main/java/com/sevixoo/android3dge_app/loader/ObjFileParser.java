@@ -96,9 +96,11 @@ public class ObjFileParser implements FileParser{
     private static void processVertex(String[] vertexData, List<Integer> indices, List<Vector2f> textures, List<Vector3f> normals, float[] textureArray, float[] normalsArray){
         int currentVertexPointer = Integer.parseInt(vertexData[0]) - 1;
         indices.add(currentVertexPointer);
-        Vector2f currentTexture = textures.get(Integer.parseInt(vertexData[1])-1);
-        textureArray[currentVertexPointer*2] = currentTexture.x;
-        textureArray[currentVertexPointer*2+1] = 1 - currentTexture.y;
+        if(!vertexData[1].equals("")) {
+            Vector2f currentTexture = textures.get(Integer.parseInt(vertexData[1]) - 1);
+            textureArray[currentVertexPointer * 2] = currentTexture.x;
+            textureArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y;
+        }
         Vector3f currentNorm = normals.get(Integer.parseInt(vertexData[2])-1);
         normalsArray[currentVertexPointer*2] = currentNorm.x;
         normalsArray[currentVertexPointer*2+1] = currentNorm.y;
