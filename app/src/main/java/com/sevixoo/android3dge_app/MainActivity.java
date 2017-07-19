@@ -3,10 +3,17 @@ package com.sevixoo.android3dge_app;
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
+
+import com.sevixoo.android3dge_app.math.Matrix4f;
+import com.sevixoo.android3dge_app.math.Vector3f;
+import com.sevixoo.android3dge_app.math.Vector4f;
 
 import java.io.IOException;
 
@@ -39,12 +46,6 @@ public class MainActivity extends Activity {
     public void loadData(){
         mWorld = new World();
 
-        /*mObject3D = new Object3D(new float[]{   // in counterclockwise order:
-                1080.0f,  1704.0f, 0.0f, // top
-                0.0f, 0.0f, 0.0f, // bottom left
-                0.0f, 1704.0f, 0.0f, // bottom left
-        });*/
-
         mObject3D = new Object3D(new float[]{   // in counterclockwise order:
                 1080.0f,  1704.0f, 0.0f, // top
                 0.0f, 0.0f, 0.0f, // bottom left
@@ -56,11 +57,6 @@ public class MainActivity extends Activity {
                 0.0f, 1704.0f, 0.0f, // bottom left
         });
 
-        /*mObject3D = new Object3D(new float[]{   // in counterclockwise order:
-                0.0f,  0.622008459f, 0.0f, // top
-                -0.5f, -0.311004243f, 0.0f, // bottom left
-                0.5f, -0.311004243f, 0.0f  // bottom right
-        });*/
         mObject3D.setColor(new float[]{ 0.63671875f, 0.76953125f, 0.22265625f, 1.0f });
         mScaledObject3D = new Object3D(new float[]{   // in counterclockwise order:
                 0.0f,  0.622008459f, 0.0f, // top
@@ -99,13 +95,10 @@ public class MainActivity extends Activity {
         }
 
         mBananaObject.setColor(255,0,0);
-        mBananaObject.setGLSLShader(mColorGLSLShader);
-        mScaledObject3D.setGLSLShader(mColorGLSLShader);
-        mObject3D.setGLSLShader(mDefGLSLShader);
-        //mWorld.add(mScaledObject3D);
-        //mWorld.add(mObject3D);
-        mWorld.add(mBananaObject);
         mBananaObject.rotateX(90f);
+        mBananaObject.setGLSLShader(mColorGLSLShader);
+
+        mWorld.add(mBananaObject);
     }
 
     @Override
@@ -131,8 +124,8 @@ public class MainActivity extends Activity {
             public void onSurfaceChanged(GL10 gl, int width, int height) {
                 Log.e("onSurfaceChanged", "width=" + width + ",height=" + height);
                 GLES20.glViewport(0, 0, width, height);
-                //mWorld.getCamera().setProjection(0,width,height,0);
 
+                //mWorld.getCamera().setProjection(0,width,height,0);
                 //float ratio = (float) width / height;
                 //mWorld.getCamera().setProjection(-ratio,ratio,-1,1);
 
@@ -160,6 +153,32 @@ public class MainActivity extends Activity {
             }
         });
         mContainer.addView(mGlSurfaceView);
+
+        mGlSurfaceView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_MOVE ||
+                        event.getAction() == MotionEvent.ACTION_DOWN){
+                    Log.e("onTouch", "x:" + event.getX() + " y:" + event.getY());
+
+                    //Normalised Device Coordinates
+                    float nx = (2.0f * event.getX()) / (float) mGlSurfaceView.getWidth() - 1.0f;
+                    float ny = 1.0f - (2.0f * event.getY()) / (float) mGlSurfaceView.getHeight();
+                    Vector4f rayClip = new Vector4f(nx,ny,-1.0f,1.0f);
+                    Log.e("onTouch", "nx:" + nx + " ny:" + ny );
+                    //4d Eye (Camera) Coordinates
+                    Vector4f rayEye = new Matrix4f(mWorld.getCamera().getProjectionMatrix()).inverse().multiply(rayClip);
+                    rayEye = new Vector4f(rayEye.xy(), -1.0f, 0.0f);
+                    Log.e("rayEye", "rx:" + rayEye.x() + " ry:" + rayEye.y() + " rz:" + rayEye.z() + " rw:" + rayEye.w());
+                    //World Coordinates
+                    Vector3f rayWor = new Matrix4f(mWorld.getCamera().getViewMatrix()).inverse().multiply(rayEye).xyz();
+                    rayWor = rayWor.normalize();
+                    Log.e("rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z() );
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override

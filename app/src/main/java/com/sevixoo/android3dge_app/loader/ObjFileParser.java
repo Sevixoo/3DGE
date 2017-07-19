@@ -85,9 +85,9 @@ public class ObjFileParser implements FileParser{
 
         int vertexPointer = 0;
         for (Integer index : indices) {
-            verticesArray[vertexPointer++] = vertices.get(index).x;
-            verticesArray[vertexPointer++] = vertices.get(index).y;
-            verticesArray[vertexPointer++] = vertices.get(index).z;
+            verticesArray[vertexPointer++] = vertices.get(index).x();
+            verticesArray[vertexPointer++] = vertices.get(index).y();
+            verticesArray[vertexPointer++] = vertices.get(index).z();
         }
 
         return new Object3D(verticesArray,texturesArray,normalsArray);
@@ -98,13 +98,13 @@ public class ObjFileParser implements FileParser{
         indices.add(currentVertexPointer);
         if(!vertexData[1].equals("")) {
             Vector2f currentTexture = textures.get(Integer.parseInt(vertexData[1]) - 1);
-            textureArray[currentVertexPointer * 2] = currentTexture.x;
-            textureArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y;
+            textureArray[currentVertexPointer * 2] = currentTexture.x();
+            textureArray[currentVertexPointer * 2 + 1] = 1 - currentTexture.y();
         }
         Vector3f currentNorm = normals.get(Integer.parseInt(vertexData[2])-1);
-        normalsArray[currentVertexPointer*2] = currentNorm.x;
-        normalsArray[currentVertexPointer*2+1] = currentNorm.y;
-        normalsArray[currentVertexPointer*2+2] = currentNorm.z;
+        normalsArray[currentVertexPointer*2] = currentNorm.x();
+        normalsArray[currentVertexPointer*2+1] = currentNorm.y();
+        normalsArray[currentVertexPointer*2+2] = currentNorm.z();
     }
 
 }

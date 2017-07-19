@@ -6,13 +6,47 @@ package com.sevixoo.android3dge_app.math;
 
 public class Vector3f {
 
-    public float x;
-    public float y;
-    public float z;
+    private float[] mData = new float[3];
+
+    public Vector3f( float[] array ) {
+        this( array[0], array[1], array[2]);
+    }
+
+    public Vector3f( Vector2f v , float z ) {
+        this( v.x(), v.y(), z );
+    }
 
     public Vector3f(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.mData[0] = x;
+        this.mData[1] = y;
+        this.mData[2] = z;
     }
+
+    public float length(){
+        return (float) Math.sqrt( x()*x() + y()*y() + z()*z() );
+    }
+
+    public float x(){
+        return mData[0];
+    }
+
+    public float y(){
+        return mData[1];
+    }
+
+    public float z(){
+        return mData[2];
+    }
+
+    public Vector3f normalize() {
+        float[] product = new float[3];
+        float length = length();
+        if (length != 0) {
+            product[0] = x()/length;
+            product[1] = y()/length;
+            product[2] = z()/length;
+        }
+        return new Vector3f(product);
+    }
+
 }
