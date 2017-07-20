@@ -8,7 +8,7 @@ import android.opengl.Matrix;
 
 public class Camera {
 
-    private final float[] mProjectionMatrix = new float[16];
+    private float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
 
     private float[] mPosition;
@@ -31,7 +31,13 @@ public class Camera {
 
     public void setOrthoProjection(int width, float height, float s){
         float aspectRatio = (float) width / (float) height;
-        Matrix.orthoM(mProjectionMatrix, 0, -aspectRatio * s, aspectRatio * s, -1 * s, 1 * s, 1, 20);
+        Matrix.orthoM(mProjectionMatrix, 0, -aspectRatio * s, aspectRatio * s, -1 * s, 1 * s, 10, 20);
+        mProjectionMatrix = new float[]{
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        };
     }
 
     public void setPosition(float x, float y, float z){

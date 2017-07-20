@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.sevixoo.android3dge_app.collision.WorldCollisionDetector;
 import com.sevixoo.android3dge_app.math.Matrix4f;
 import com.sevixoo.android3dge_app.math.Vector3f;
 import com.sevixoo.android3dge_app.math.Vector4f;
@@ -42,6 +43,9 @@ public class MainActivity extends Activity {
     private FrameBuffer mFrameBuffer;
     private FrameBuffer mFrameBuffer2;
     private ScreenRenderer mScreen;
+
+    private MotionEvent mMotionEvent;
+    private WorldCollisionDetector mWorldCollisionDetector;
 
     public void loadData(){
         mWorld = new World();
@@ -96,8 +100,8 @@ public class MainActivity extends Activity {
 
         mBananaObject.setColor(255,0,0);
         mBananaObject.rotateX(90f);
-        mBananaObject.setGLSLShader(mColorGLSLShader);
-
+        mBananaObject.setGLSLShader(mDefGLSLShader);
+        //mBananaObject.translate(1.5f,0,0);
         mWorld.add(mBananaObject);
     }
 
@@ -134,12 +138,42 @@ public class MainActivity extends Activity {
                 mScreen = new ScreenRenderer();
                 mWorld.getCamera().setPosition(0,0,10);
                 mWorld.getCamera().lookAt(0,0,0);
+
+                mWorldCollisionDetector = new WorldCollisionDetector(mWorld.getCamera());
+
                 mFrameBuffer = new FrameBuffer(width,height);
                 mFrameBuffer2 = new FrameBuffer(width,height);
             }
 
             @Override
             public void onDrawFrame(GL10 gl) {
+
+                if(mMotionEvent != null) {
+                    //Normalised Device Coordinates
+                    float nx = (2.0f * mMotionEvent.getX()) / (float) mGlSurfaceView.getWidth() - 1.0f;
+                    float ny = 1.0f - (2.0f * mMotionEvent.getY()) / (float) mGlSurfaceView.getHeight();
+
+                    Vector4f rayClip = new Vector4f(nx, ny, -1.0f, 1.0f);
+                    //4d Eye (Camera) Coordinates
+                    Vector4f rayEye = new Matrix4f(mWorld.getCamera().getProjectionMatrix()).inverse().multiply(rayClip);
+                    rayEye = new Vector4f(rayEye.xy(), -1.0f, 0.0f);
+                    //World Coordinates
+                    Vector3f rayWor = new Matrix4f(mWorld.getCamera().getViewMatrix()).inverse().multiply(rayEye).xyz();
+                    rayWor = rayWor.normalize();
+
+
+                    Float collision = mBananaObject.getCollidingBody().test(mWorldCollisionDetector,rayWor);
+                    if(collision == null){
+                        Log.e("miss rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
+                        mBananaObject.setColor(0,0,255);
+                    }else{
+                        Log.e("hit rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
+                        mBananaObject.setColor(255,0,0);
+                        Log.e("hit dist", "distance = " + collision);
+                    }
+                }else{
+                    mBananaObject.setColor(0,0,255);
+                }
 
                 //long time = SystemClock.uptimeMillis() % 4000L;
                 //float angle = 0.090f * ((int) time);
@@ -159,21 +193,9 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_MOVE ||
                         event.getAction() == MotionEvent.ACTION_DOWN){
-                    Log.e("onTouch", "x:" + event.getX() + " y:" + event.getY());
-
-                    //Normalised Device Coordinates
-                    float nx = (2.0f * event.getX()) / (float) mGlSurfaceView.getWidth() - 1.0f;
-                    float ny = 1.0f - (2.0f * event.getY()) / (float) mGlSurfaceView.getHeight();
-                    Vector4f rayClip = new Vector4f(nx,ny,-1.0f,1.0f);
-                    Log.e("onTouch", "nx:" + nx + " ny:" + ny );
-                    //4d Eye (Camera) Coordinates
-                    Vector4f rayEye = new Matrix4f(mWorld.getCamera().getProjectionMatrix()).inverse().multiply(rayClip);
-                    rayEye = new Vector4f(rayEye.xy(), -1.0f, 0.0f);
-                    Log.e("rayEye", "rx:" + rayEye.x() + " ry:" + rayEye.y() + " rz:" + rayEye.z() + " rw:" + rayEye.w());
-                    //World Coordinates
-                    Vector3f rayWor = new Matrix4f(mWorld.getCamera().getViewMatrix()).inverse().multiply(rayEye).xyz();
-                    rayWor = rayWor.normalize();
-                    Log.e("rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z() );
+                    mMotionEvent = event;
+                }else {
+                    mMotionEvent = null;
                 }
                 return true;
             }

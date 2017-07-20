@@ -3,6 +3,9 @@ package com.sevixoo.android3dge_app;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import com.sevixoo.android3dge_app.collision.ICollidingBody;
+import com.sevixoo.android3dge_app.collision.SphereCollidingBody;
+import com.sevixoo.android3dge_app.collision.ValueProvider;
 import com.sevixoo.android3dge_app.math.Vector3f;
 
 import java.nio.ByteBuffer;
@@ -17,6 +20,8 @@ public class Object3D {
 
     private FloatBuffer mVertexBuffer;
     private FloatBuffer mNormalsBuffer;
+
+    private ICollidingBody mCollidingBody;
 
     float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -57,6 +62,13 @@ public class Object3D {
         mNormalsBuffer = normalBuffer.asFloatBuffer();
         mNormalsBuffer.put(normalsArray);
         mNormalsBuffer.position(0);
+
+        mCollidingBody = new SphereCollidingBody(new ValueProvider<Vector3f>() {
+            @Override
+            public Vector3f get() {
+                return position();
+            }
+        }, 2*0.1f );
     }
 
     public void scale( float s ){
@@ -86,6 +98,10 @@ public class Object3D {
         mModelMatrix = buildModelMatrix();
     }
 
+    public Vector3f position(){
+        return new Vector3f( mTranslation );
+    }
+
     private float[] buildModelMatrix(){
         float s = mScale;
         float[] t = mTranslation;
@@ -96,13 +112,14 @@ public class Object3D {
                 0, 0, 0, 1
         };
         float[] transformed = new float[16];
-        Matrix.multiplyMM(transformed, 0, modelMatrix, 0, mRotationMatrix, 0);
-        return transformed;
+        //Matrix.multiplyMM(transformed, 0, modelMatrix, 0, mRotationMatrix, 0);
+        return modelMatrix;
     }
 
     public void setColor(float[] color){
         this.color = color;
     }
+
 
     public void setColor(float r, float g, float b){
         setColor(new float[]{ r/255f, g/255f, b/255f, 1 });
@@ -110,6 +127,10 @@ public class Object3D {
 
     public void setGLSLShader(GLSLShader mGLSLShader){
         this.mGLSLShader = mGLSLShader;
+    }
+
+    public ICollidingBody getCollidingBody(){
+        return mCollidingBody;
     }
 
     public void draw(float[] vpMatrix,float[] cameraPosition){

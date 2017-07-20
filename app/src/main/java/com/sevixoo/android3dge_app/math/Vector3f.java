@@ -49,4 +49,15 @@ public class Vector3f {
         return new Vector3f(product);
     }
 
+    public Vector3f minus(Vector3f center) {
+        return new Vector3f(
+                x() - center.x(),
+                y() - center.y(),
+                z() - center.z()
+        );
+    }
+
+    public float dot(Vector3f v) {
+        return x()*v.x() + y()*v.y() + z()*v.z();
+    }
 }
