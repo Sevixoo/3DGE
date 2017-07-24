@@ -118,90 +118,90 @@ public class MainActivity extends Activity {
         mGlSurfaceView = new GLSurfaceView(getBaseContext());
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
-            @Override
-            public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                loadData();
-            }
+        @Override
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            loadData();
+        }
 
-            @Override
-            public void onSurfaceChanged(GL10 gl, int width, int height) {
-                Log.e("onSurfaceChanged", "width=" + width + ",height=" + height);
-                GLES20.glViewport(0, 0, width, height);
+        @Override
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            Log.e("onSurfaceChanged", "width=" + width + ",height=" + height);
+            GLES20.glViewport(0, 0, width, height);
 
-                //mWorld.getCamera().setProjection(0,width,height,0);
-                //float ratio = (float) width / height;
-                //mWorld.getCamera().setProjection(-ratio,ratio,-1,1);
+            //mWorld.getCamera().setProjection(0,width,height,0);
+            //float ratio = (float) width / height;
+            //mWorld.getCamera().setProjection(-ratio,ratio,-1,1);
 
-                mWorld.getCamera().setOrthoProjection(width,height,10);
+            mWorld.getCamera().setOrthoProjection(width,height,10);
 
-                mScreen = new ScreenRenderer();
-                mWorld.getCamera().setPosition(0,0,10);
-                mWorld.getCamera().lookAt(0,0,0);
+            mScreen = new ScreenRenderer();
+            mWorld.getCamera().setPosition(0,0,10);
+            mWorld.getCamera().lookAt(0,0,0);
 
-                mWorldCollisionDetector = new WorldCollisionDetector(mWorld.getCamera());
+            mWorldCollisionDetector = new WorldCollisionDetector(mWorld.getCamera());
 
-                mFrameBuffer = new FrameBuffer(width,height);
-                mFrameBuffer2 = new FrameBuffer(width,height);
-            }
+            mFrameBuffer = new FrameBuffer(width,height);
+            mFrameBuffer2 = new FrameBuffer(width,height);
+        }
 
-            @Override
-            public void onDrawFrame(GL10 gl) {
+        @Override
+        public void onDrawFrame(GL10 gl) {
 
-                if(mMotionEvent != null) {
-                    //Normalised Device Coordinates
-                    float nx = (2.0f * mMotionEvent.getX()) / (float) mGlSurfaceView.getWidth() - 1.0f;
-                    float ny = 1.0f - (2.0f * mMotionEvent.getY()) / (float) mGlSurfaceView.getHeight();
+            if(mMotionEvent != null) {
+                //Normalised Device Coordinates
+                float nx = (2.0f * mMotionEvent.getX()) / (float) mGlSurfaceView.getWidth() - 1.0f;
+                float ny = 1.0f - (2.0f * mMotionEvent.getY()) / (float) mGlSurfaceView.getHeight();
 
-                    Vector4f rayClip = new Vector4f(nx, ny, -1.0f, 1.0f);
-                    //4d Eye (Camera) Coordinates
-                    Vector4f rayEye = new Matrix4f(mWorld.getCamera().getProjectionMatrix()).inverse().multiply(rayClip);
-                    rayEye = new Vector4f(rayEye.xy(), -1.0f, 0.0f);
-                    //World Coordinates
-                    Vector3f rayWor = new Matrix4f(mWorld.getCamera().getViewMatrix()).inverse().multiply(rayEye).xyz();
-                    rayWor = rayWor.normalize();
+                Vector4f rayClip = new Vector4f(nx, ny, -1.0f, 1.0f);
+                //4d Eye (Camera) Coordinates
+                Vector4f rayEye = new Matrix4f(mWorld.getCamera().getProjectionMatrix()).inverse().multiply(rayClip);
+                rayEye = new Vector4f(rayEye.xy(), -1.0f, 0.0f);
+                //World Coordinates
+                Vector3f rayWor = new Matrix4f(mWorld.getCamera().getViewMatrix()).inverse().multiply(rayEye).xyz();
+                rayWor = rayWor.normalize();
 
 
-                    Float collision = mBananaObject.getCollidingBody().test(mWorldCollisionDetector,rayWor);
-                    if(collision == null){
-                        Log.e("miss rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
-                        mBananaObject.setColor(0,0,255);
-                    }else{
-                        Log.e("hit rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
-                        mBananaObject.setColor(255,0,0);
-                        Log.e("hit dist", "distance = " + collision);
-                    }
-                }else{
+                Float collision = mBananaObject.getCollidingBody().test(mWorldCollisionDetector,rayWor);
+                if(collision == null){
+                    Log.e("miss rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
                     mBananaObject.setColor(0,0,255);
+                }else{
+                    Log.e("hit rayWor", "wx:" + rayWor.x() + " wy:" + rayWor.y() + " wz:" + rayWor.z());
+                    mBananaObject.setColor(255,0,0);
+                    Log.e("hit dist", "distance = " + collision);
                 }
-
-                //long time = SystemClock.uptimeMillis() % 4000L;
-                //float angle = 0.090f * ((int) time);
-                //mBananaObject.rotateX(angle);
-
-                mScreen.clearColor();
-                mWorld.display();
-                //mWorld.draw(mFrameBuffer);
-                //mScreen.draw(mRendererShader,mFrameBuffer,mFrameBuffer2);
-                //mScreen.display(mRendererShader,mFrameBuffer2);
+            }else{
+                mBananaObject.setColor(0,0,255);
             }
-        });
+
+            //long time = SystemClock.uptimeMillis() % 4000L;
+            //float angle = 0.090f * ((int) time);
+            //mBananaObject.rotateX(angle);
+
+            mScreen.clearColor();
+            mWorld.display();
+            //mWorld.draw(mFrameBuffer);
+            //mScreen.draw(mRendererShader,mFrameBuffer,mFrameBuffer2);
+            //mScreen.display(mRendererShader,mFrameBuffer2);
+        }
+    });
         mContainer.addView(mGlSurfaceView);
 
         mGlSurfaceView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_MOVE ||
-                        event.getAction() == MotionEvent.ACTION_DOWN){
-                    mMotionEvent = event;
-                }else {
-                    mMotionEvent = null;
-                }
-                return true;
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if(event.getAction() == MotionEvent.ACTION_MOVE ||
+                    event.getAction() == MotionEvent.ACTION_DOWN){
+                mMotionEvent = event;
+            }else {
+                mMotionEvent = null;
             }
-        });
+            return true;
+        }
+    });
 
-    }
+}
 
     @Override
     protected void onResume() {

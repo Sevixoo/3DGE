@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/3DGE.iml" filepath="$PROJECT_DIR$/3DGE.iml" />
       <module fileurl="file://$PROJECT_DIR$/3DGE-android/3DGE-android.iml" filepath="$PROJECT_DIR$/3DGE-android/3DGE-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3DGE-test/3DGE-test.iml" filepath="$PROJECT_DIR$/3DGE-test/3DGE-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

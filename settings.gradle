@@ -1,1 +1,1 @@
-include ':app', ':3DGE-android'
+include ':app', ':3DGE-android', ':3DGE-test'
