@@ -3,14 +3,11 @@ package com.sevixoo.android3dge;
 import android.opengl.GLES30;
 import android.util.Log;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-
-import static android.R.attr.data;
 
 /**
  * Created by seweryn on 24.07.2017.
@@ -176,4 +173,19 @@ public class GLContext {
     public void disableVertexAttribArray(int index) {
         GLES30.glDisableVertexAttribArray(index);
     }
+
+    public void uniform4f(int handle, float x, float y, float z, float w) {
+        GLES30.glUniform4f(handle , x, y, z, w);
+    }
+
+    public void uniformMatrix4fv(int handle, float[] matrix) {
+        FloatBuffer buffer = ByteBuffer.allocateDirect ( matrix.length * 4 ).order ( ByteOrder.nativeOrder() ).asFloatBuffer();
+        buffer.put ( matrix ).position ( 0 );
+        GLES30.glUniformMatrix4fv(handle, 1, false, buffer);
+    }
+
+    public int getUniformLocation(int program, String name) {
+        return GLES30.glGetUniformLocation (program, name);
+    }
+
 }

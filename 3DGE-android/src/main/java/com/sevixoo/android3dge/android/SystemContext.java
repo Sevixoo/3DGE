@@ -10,4 +10,6 @@ public abstract class SystemContext {
 
     public abstract String loadFile( String path ) throws IOException;
 
+    public abstract boolean isGLES30Supported();
+
 }

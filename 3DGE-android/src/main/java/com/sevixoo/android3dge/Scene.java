@@ -11,10 +11,12 @@ public class Scene {
     private List<Object3D> mObjects;
 
     private Camera mCamera;
+    private Renderer mRenderer;
 
     public Scene() {
         mObjects = new ArrayList<>();
         mCamera = new Camera();
+        mRenderer = new Renderer();
     }
 
     public Camera getCamera(){
@@ -34,8 +36,9 @@ public class Scene {
     }
 
     public void display() {
+        mRenderer.prepare( mCamera.getViewMatrix(), mCamera.getProjectionMatrix() );
         for (Object3D mObject : mObjects) {
-            mObject.draw();
+            mObject.draw(mRenderer);
         }
     }
 }

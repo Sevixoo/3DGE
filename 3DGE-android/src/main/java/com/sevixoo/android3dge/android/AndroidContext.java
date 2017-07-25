@@ -1,6 +1,8 @@
 package com.sevixoo.android3dge.android;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,13 +42,11 @@ public class AndroidContext extends SystemContext {
         return returnString.toString();
     }
 
-
-    /*private boolean detectOpenGLES30()
-   {
-      ActivityManager am =
-         ( ActivityManager ) getSystemService ( Context.ACTIVITY_SERVICE );
-      ConfigurationInfo info = am.getDeviceConfigurationInfo();
-      return ( info.reqGlEsVersion >= 0x30000 );
-   }*/
+    @Override
+    public boolean isGLES30Supported() {
+        ActivityManager am = ( ActivityManager ) mContext.getSystemService ( Context.ACTIVITY_SERVICE );
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return ( info.reqGlEsVersion >= 0x30000 );
+    }
 
 }

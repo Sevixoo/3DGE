@@ -1,7 +1,9 @@
 package com.sevixoo.android3dge;
 
+import com.sevixoo.android3dge.math.Matrix4f;
+import com.sevixoo.android3dge.math.Vector4f;
+
 import java.io.IOException;
-import java.nio.IntBuffer;
 
 /**
  * Created by seweryn on 22.07.2017.
@@ -35,4 +37,13 @@ public class ShaderProgram {
         GLContext.get().useProgram(0);
     }
 
+    public void uniformVec4f(String name, Vector4f value) {
+        int handle = GLContext.get().getUniformLocation(mProgram,name);
+        GLContext.get().uniform4f(handle,value.x(),value.y(),value.z(),value.w());
+    }
+
+    public void uniformMatrix4f(String name, Matrix4f matrix) {
+        int handle = GLContext.get().getUniformLocation(mProgram,name);
+        GLContext.get().uniformMatrix4fv(handle,matrix.get());
+    }
 }

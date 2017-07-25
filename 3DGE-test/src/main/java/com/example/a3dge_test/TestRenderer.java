@@ -2,7 +2,6 @@ package com.example.a3dge_test;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 import com.sevixoo.android3dge.GLContext;
 import com.sevixoo.android3dge.Loader;
@@ -25,7 +24,7 @@ public class TestRenderer implements GLSurfaceView.Renderer{
     private Scene mScene;
 
     private Object3D mSquareObject;
-    
+
     public TestRenderer(Context mContext, GLSurfaceView surfaceView) {
         this.mContext = mContext;
         this.mGLSurfaceView = surfaceView;
@@ -36,7 +35,6 @@ public class TestRenderer implements GLSurfaceView.Renderer{
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         GLContext.initialize();
-        Log.e("onSurfaceCreated","onSurfaceCreated");
 
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
@@ -48,23 +46,21 @@ public class TestRenderer implements GLSurfaceView.Renderer{
         }, new short[]{ 0, 1, 2, 0, 2, 3 });
 
         mScene.addObject(mSquareObject);
+        mSquareObject.scale(0.5f);
+        mSquareObject.translate(0.25f,0.0f,0.0f);
 
-        Log.e("onSurfaceCreated","go");
         try {
             this.mSquareObject.setShader(mLoader.loadShader("default"));
         }catch (Exception ex){
             ex.printStackTrace();
-            Log.e("onSurfaceCreated","error");
             throw new RuntimeException(ex);
 
         }
-        Log.e("onSurfaceCreated","end");
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int w, int h) {
         mScene.viewport(w,h);
-        Log.e("onSurfaceChanged","viewport");
     }
 
     @Override
