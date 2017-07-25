@@ -30,7 +30,7 @@ public class Scene {
     }
 
     public void clearColor(){
-        GLContext.get().clearColor(0.2f, 0.2f, 0.2f, 1);
+        GLContext.get().clearColor(0.3f, 0.2f, 0.2f, 1);
     }
 
     public void display() {

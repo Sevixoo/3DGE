@@ -1,4 +1,4 @@
-#version 300 es\n
+precision mediump float;
 
 out vec4 outColor;
 

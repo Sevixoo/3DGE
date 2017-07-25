@@ -19,7 +19,8 @@ public class ShaderProgram {
 
         GLContext gl = GLContext.get();
 
-        this.mProgram = gl.createProgram( mVertexShader.getId(), mFragmentShader.getId() );
+        mProgram = gl.createProgram( mVertexShader.getId(), mFragmentShader.getId() );
+
         String error = gl.compileProgram(mProgram);
         if(error != null){
             throw new IOException( "glValidateProgram error infolog: " + error );
@@ -32,10 +33,6 @@ public class ShaderProgram {
 
     public void stop(){
         GLContext.get().useProgram(0);
-    }
-
-    public void bindAttribute( String name, int attributeName ){
-        GLContext.get().bindAttribLocation( mProgram, attributeName, name );
     }
 
 }

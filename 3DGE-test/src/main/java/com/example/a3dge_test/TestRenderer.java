@@ -25,8 +25,7 @@ public class TestRenderer implements GLSurfaceView.Renderer{
     private Scene mScene;
 
     private Object3D mSquareObject;
-
-
+    
     public TestRenderer(Context mContext, GLSurfaceView surfaceView) {
         this.mContext = mContext;
         this.mGLSurfaceView = surfaceView;
@@ -46,13 +45,13 @@ public class TestRenderer implements GLSurfaceView.Renderer{
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
                 0.5f,  0.5f, 0.0f
-        }, new int[]{ 0, 1, 2, 0, 2, 3 });
+        }, new short[]{ 0, 1, 2, 0, 2, 3 });
 
         mScene.addObject(mSquareObject);
 
         Log.e("onSurfaceCreated","go");
         try {
-            this.mSquareObject.setShader(mLoader.loadShader("def"));
+            this.mSquareObject.setShader(mLoader.loadShader("default"));
         }catch (Exception ex){
             ex.printStackTrace();
             Log.e("onSurfaceCreated","error");

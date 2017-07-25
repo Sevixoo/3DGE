@@ -1,10 +1,14 @@
 package com.sevixoo.android3dge;
 
 import android.opengl.GLES30;
+import android.util.Log;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import static android.R.attr.data;
 
@@ -13,6 +17,8 @@ import static android.R.attr.data;
  */
 
 public class GLContext {
+
+
 
     private static GLContext instance;
 
@@ -24,6 +30,8 @@ public class GLContext {
     }
 
     public static void initialize() {
+        Log.i("GL_VERSION", GLES30.glGetString(GLES30.GL_VERSION) );
+        Log.i("GL_EXTENSIONS", GLES30.glGetString(GLES30.GL_EXTENSIONS) );
         instance = new GLContext();
     }
 
@@ -65,18 +73,20 @@ public class GLContext {
     }
 
     public void bindAttribLocation(int program, int attributeName, String name) {
+        GLES30.glEnableVertexAttribArray(attributeName);
         GLES30.glBindAttribLocation(program,attributeName,name);
+        GLES30.glDisableVertexAttribArray(attributeName);
     }
 
     public int createProgram(int vertexShader, int fragmentShader) {
         int program = GLES30.glCreateProgram();
         GLES30.glAttachShader(program, vertexShader);
         GLES30.glAttachShader(program, fragmentShader);
-        GLES30.glLinkProgram(program);
         return program;
     }
 
     public String compileProgram(int program){
+        GLES30.glLinkProgram(program);
         IntBuffer status = IntBuffer.allocate(1);
         GLES30.glGetProgramiv( program, GLES30.GL_LINK_STATUS , status );
         int errorCode = status.get();
@@ -122,18 +132,29 @@ public class GLContext {
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vbo);
     }
 
-    public void arrayBufferDataWrite(int[] data) {
+    public void bindElementsArrayBuffer(int vbo) {
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,vbo);
+    }
+
+    public IntBuffer arrayBufferDataWrite(int[] data) {
         IntBuffer buffer = IntBuffer.allocate(data.length);
         buffer.put(data);
         buffer.flip();
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, data.length , buffer, GLES30.GL_STATIC_DRAW);
+        return buffer;
+    }
+
+    public void elementsArrayBufferDataWrite(short[] data) {
+        ShortBuffer buffer = ByteBuffer.allocateDirect ( data.length * 2 ).order ( ByteOrder.nativeOrder() ).asShortBuffer();
+        buffer.put ( data ).position ( 0 );
+        GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, data.length * 2 , buffer, GLES30.GL_STATIC_DRAW);
     }
 
     public void arrayBufferDataWrite(float[] data) {
-        FloatBuffer buffer = FloatBuffer.allocate(data.length);
-        buffer.put(data);
-        buffer.flip();
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, data.length , buffer, GLES30.GL_STATIC_DRAW);
+        FloatBuffer buffer = ByteBuffer.allocateDirect ( data.length * 4 )
+                .order ( ByteOrder.nativeOrder() ).asFloatBuffer();
+        buffer.put ( data ).position ( 0 );
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, data.length * 4 , buffer, GLES30.GL_STATIC_DRAW);
     }
 
     public void vertexAttribPointerF(int attributeNumber, int dataSize) {
@@ -145,7 +166,7 @@ public class GLContext {
     }
 
     public void drawTriangleElements( int verticesCount ) {
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, verticesCount, GLES30.GL_UNSIGNED_INT, 0);
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, verticesCount, GLES30.GL_UNSIGNED_SHORT, 0);
     }
 
     public void enableVertexAttribArray(int index) {

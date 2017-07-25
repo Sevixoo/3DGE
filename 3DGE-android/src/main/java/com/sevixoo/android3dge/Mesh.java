@@ -1,9 +1,13 @@
 package com.sevixoo.android3dge;
 
 import android.opengl.GLES30;
+import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +24,8 @@ public class Mesh {
     private int mVAOId;
     private int mVerticesCount;
 
-    Mesh(float[] vertices, int[] indices){
+
+    Mesh(float[] vertices, short[] indices){
         GLContext gl = GLContext.get();
         mVerticesCount = indices.length;
 
@@ -28,15 +33,14 @@ public class Mesh {
         gl.bindVertexArray(mVAOId);
 
             mIndexVBO = gl.genBuffer();
-            gl.bindArrayBuffer(mIndexVBO);
-                gl.arrayBufferDataWrite(indices);
-                gl.vertexAttribPointerU(0, 2);
-            gl.bindArrayBuffer(0);
+            gl.bindElementsArrayBuffer(mIndexVBO);
+                gl.elementsArrayBufferDataWrite(indices);
+            gl.bindElementsArrayBuffer(0);
 
             mPositionsVBO = gl.genBuffer();
             gl.bindArrayBuffer(mPositionsVBO);
                 gl.arrayBufferDataWrite(vertices);
-                gl.vertexAttribPointerF(1, 3);
+                gl.vertexAttribPointerF(0, 3);
             gl.bindArrayBuffer(0);
 
         gl.bindVertexArray(0);
@@ -44,12 +48,13 @@ public class Mesh {
 
     void draw() {
         GLContext gl = GLContext.get();
+
         gl.bindVertexArray(mVAOId);
+            gl.bindElementsArrayBuffer(mIndexVBO);
             gl.enableVertexAttribArray(0);
-            //gl.enableVertexAttribArray(1);
                 gl.drawTriangleElements(mVerticesCount);
-            gl.disableVertexAttribArray(1);
-            //gl.disableVertexAttribArray(0);
+            gl.disableVertexAttribArray(0);
+            gl.bindElementsArrayBuffer(0);
         gl.bindVertexArray(0);
     }
 }

@@ -13,7 +13,7 @@ public class Object3D {
 
     //collider
 
-    public Object3D(float[] vertices, int[] indices){
+    public Object3D(float[] vertices, short[] indices){
         this(new Mesh(vertices,indices),null,null);
     }
 
@@ -29,7 +29,6 @@ public class Object3D {
 
     public void draw() {
         mShader.start();
-        mShader.bindAttribute("vPosition",0);
         mMesh.draw();
         mShader.stop();
     }

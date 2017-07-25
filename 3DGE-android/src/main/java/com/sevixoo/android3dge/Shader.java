@@ -13,9 +13,9 @@ public class Shader {
         GLContext gl = GLContext.get();
 
         if(type == ShaderType.VERTEX_SHADER){
-            mShaderId = gl.createVertexShader(shaderCode);
+            mShaderId = gl.createVertexShader("#version 300 es\n" +shaderCode);
         }else{
-            mShaderId = gl.createFragmentShader(shaderCode);
+            mShaderId = gl.createFragmentShader("#version 300 es\n" +shaderCode);
         }
         String error = gl.compileShader(mShaderId);
         if(error != null){

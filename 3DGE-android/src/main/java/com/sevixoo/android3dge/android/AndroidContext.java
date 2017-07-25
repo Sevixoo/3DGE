@@ -40,4 +40,13 @@ public class AndroidContext extends SystemContext {
         return returnString.toString();
     }
 
+
+    /*private boolean detectOpenGLES30()
+   {
+      ActivityManager am =
+         ( ActivityManager ) getSystemService ( Context.ACTIVITY_SERVICE );
+      ConfigurationInfo info = am.getDeviceConfigurationInfo();
+      return ( info.reqGlEsVersion >= 0x30000 );
+   }*/
+
 }
