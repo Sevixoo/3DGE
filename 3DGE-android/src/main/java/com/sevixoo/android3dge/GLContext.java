@@ -166,6 +166,14 @@ public class GLContext {
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, verticesCount, GLES30.GL_UNSIGNED_SHORT, 0);
     }
 
+    public void drawPointsElements( int verticesCount ) {
+        GLES30.glDrawElements(GLES30.GL_POINTS, verticesCount, GLES30.GL_UNSIGNED_SHORT, 0);
+    }
+
+    public void drawLinesElements( int verticesCount ) {
+        GLES30.glDrawElements(GLES30.GL_LINE_STRIP, verticesCount, GLES30.GL_UNSIGNED_SHORT, 0);
+    }
+
     public void enableVertexAttribArray(int index) {
         GLES30.glEnableVertexAttribArray(index);
     }
@@ -186,6 +194,14 @@ public class GLContext {
 
     public int getUniformLocation(int program, String name) {
         return GLES30.glGetUniformLocation (program, name);
+    }
+
+    public void uniform1f(int handle, float value) {
+        GLES30.glUniform1f(handle , value);
+    }
+
+    public void lineWidth(float width){
+        GLES30.glLineWidth(width);
     }
 
 }

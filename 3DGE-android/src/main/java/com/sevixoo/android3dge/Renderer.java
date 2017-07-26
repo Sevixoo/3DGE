@@ -1,5 +1,7 @@
 package com.sevixoo.android3dge;
 
+import android.opengl.GLES30;
+
 import com.sevixoo.android3dge.math.Matrix4f;
 
 /**
@@ -7,6 +9,10 @@ import com.sevixoo.android3dge.math.Matrix4f;
  */
 
 class Renderer {
+
+    private static final int DRAW_LINES = 2;
+    private static final int DRAW_POINTS = 1;
+    private static final int DRAW_TRIANGLES = 3;
 
     private Matrix4f mViewMatrix;
     private Matrix4f mProjectionMatrix;
@@ -18,7 +24,7 @@ class Renderer {
         mProjectionMatrix = projectionMatrix;
     }
 
-    void draw(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+    private void draw(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix, int drawType){
         GLContext gl = GLContext.get();
         gl.bindVertexArray(mesh.getVAOId());
         gl.bindElementsArrayBuffer(mesh.getIndexVBO());
@@ -29,15 +35,35 @@ class Renderer {
             shaderProgram.uniformMatrix4f(ShaderUniform.MVP_MATRIX, mvpMatrix);
         }
 
-        gl.drawTriangleElements(mesh.getVerticesCount());
+        if(drawType == DRAW_POINTS){
+            gl.drawPointsElements(mesh.getVerticesCount());
+        }else if(drawType == DRAW_LINES){
+            gl.drawLinesElements(mesh.getVerticesCount());
+        }else if(drawType == DRAW_TRIANGLES){
+            gl.drawTriangleElements(mesh.getVerticesCount());
+        }
 
         gl.disableVertexAttribArray(ShaderAttribute.VERTICES);
         gl.bindElementsArrayBuffer(0);
         gl.bindVertexArray(0);
     }
 
-    void draw(Mesh mesh){
-        draw(mesh,null,null);
+    void drawTriangles(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+        draw(mesh,shaderProgram,mModelMatrix,DRAW_TRIANGLES);
     }
+
+    void drawLines(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+        draw(mesh,shaderProgram,mModelMatrix,DRAW_LINES);
+    }
+
+    void drawPoints(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+        draw(mesh,shaderProgram,mModelMatrix,DRAW_POINTS);
+    }
+
+    void drawTriangles(Mesh mesh){
+        drawTriangles(mesh,null,null);
+    }
+
+
 
 }

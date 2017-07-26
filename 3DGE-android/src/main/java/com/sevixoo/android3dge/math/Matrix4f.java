@@ -1,5 +1,7 @@
 package com.sevixoo.android3dge.math;
 
+import android.opengl.Matrix;
+
 /**
  * Created by seweryn on 19.07.2017.
  */
@@ -203,7 +205,7 @@ public class Matrix4f {
         mData[2 * 4 + 3] *= sz;
     }
 
-    public void translate( float tx, float ty, float tz ) {
+    public Matrix4f translate( float tx, float ty, float tz ) {
         mData[3 * 4 + 0] += ( mData[0 * 4 + 0] * tx + mData[1 * 4 + 0]
                 * ty + mData[2 * 4 + 0] * tz );
         mData[3 * 4 + 1] += ( mData[0 * 4 + 1] * tx + mData[1 * 4 + 1]
@@ -212,6 +214,7 @@ public class Matrix4f {
                 * ty + mData[2 * 4 + 2] * tz );
         mData[3 * 4 + 3] += ( mData[0 * 4 + 3] * tx + mData[1 * 4 + 3]
                 * ty + mData[2 * 4 + 3] * tz );
+        return this;
     }
 
     public Matrix4f inverse () {
@@ -236,4 +239,83 @@ public class Matrix4f {
     public static Matrix4f loadIdentity() {
         return new Matrix4f();
     }
+
+    public static Matrix4f ortho(float left, float right, float top, float bottom, float nearZ, float farZ) {
+        float deltaX = right - left;
+        float deltaY = top - bottom;
+        float deltaZ = farZ - nearZ;
+        float[] orthoMat = loadIdentity().get();
+
+        if ( ( deltaX == 0.0f ) || ( deltaY == 0.0f ) || ( deltaZ == 0.0f ) ) {
+            return null;
+        }
+
+        orthoMat[0 * 4 + 0] = 2.0f / deltaX;
+        orthoMat[3 * 4 + 0] = - ( right + left ) / deltaX;
+        orthoMat[1 * 4 + 1] = 2.0f / deltaY;
+        orthoMat[3 * 4 + 1] = - ( top + bottom ) / deltaY;
+        orthoMat[2 * 4 + 2] = -2.0f / deltaZ;
+        orthoMat[3 * 4 + 2] = - ( nearZ + farZ ) / deltaZ;
+
+        return new Matrix4f(orthoMat);
+    }
+
+
+    private static float[] matrixMultiply ( float[] srcA, float[] srcB ) {
+        float[] tmp = new float[16];
+        int i;
+
+        for ( i = 0; i < 4; i++ )
+        {
+            tmp[i * 4 + 0] = ( srcA[i * 4 + 0] * srcB[0 * 4 + 0] )
+                    + ( srcA[i * 4 + 1] * srcB[1 * 4 + 0] )
+                    + ( srcA[i * 4 + 2] * srcB[2 * 4 + 0] )
+                    + ( srcA[i * 4 + 3] * srcB[3 * 4 + 0] );
+
+            tmp[i * 4 + 1] = ( srcA[i * 4 + 0] * srcB[0 * 4 + 1] )
+                    + ( srcA[i * 4 + 1] * srcB[1 * 4 + 1] )
+                    + ( srcA[i * 4 + 2] * srcB[2 * 4 + 1] )
+                    + ( srcA[i * 4 + 3] * srcB[3 * 4 + 1] );
+
+            tmp[i * 4 + 2] = ( srcA[i * 4 + 0] * srcB[0 * 4 + 2] )
+                    + ( srcA[i * 4 + 1] * srcB[1 * 4 + 2] )
+                    + ( srcA[i * 4 + 2] * srcB[2 * 4 + 2] )
+                    + ( srcA[i * 4 + 3] * srcB[3 * 4 + 2] );
+
+            tmp[i * 4 + 3] = ( srcA[i * 4 + 0] * srcB[0 * 4 + 3] )
+                    + ( srcA[i * 4 + 1] * srcB[1 * 4 + 3] )
+                    + ( srcA[i * 4 + 2] * srcB[2 * 4 + 3] )
+                    + ( srcA[i * 4 + 3] * srcB[3 * 4 + 3] );
+        }
+
+        return tmp;
+    }
+
+
+    public void scale(Vector3f s) {
+        scale(s.x(),s.y(),s.z());
+    }
+
+    public void translate(Vector3f t) {
+        translate(t.x(),t.y(),t.z());
+    }
+
+    public static Matrix4f lookAt( Vector3f eye, Vector3f center, Vector3f up ) {
+        float[] mat = new float[16];
+        Matrix.setLookAtM( mat, 0,
+                eye.x(), eye.y(), eye.z(),
+                center.x(), center.y(), center.z(),
+                up.x(), up.y(), up.z()
+        );
+        return new Matrix4f(mat);
+    }
+
+    public Matrix4f rotate(float angle, Vector3f vec ){
+        float[] data = new float[16];
+        Matrix.setRotateM(data, 0, angle, vec.x(), vec.y(), vec.z());
+        return this.multiply(new Matrix4f(data));
+    }
+
+
+
 }

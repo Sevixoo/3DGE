@@ -3,6 +3,7 @@ package com.sevixoo.android3dge;
 import android.opengl.GLES30;
 
 import com.sevixoo.android3dge.math.Matrix4f;
+import com.sevixoo.android3dge.math.Vector3f;
 import com.sevixoo.android3dge.math.Vector4f;
 
 /**
@@ -16,16 +17,18 @@ public class Object3D {
 
     private Vector4f        mColor;
 
-    private Matrix4f        mModelMatrix;
-
-    //position, rotation, scale
+    private Vector3f        mScale;
+    private Vector3f        mTranslation;
+    private Vector3f        mRotation;
 
     //collider
 
     public Object3D(float[] vertices, short[] indices){
         this(new Mesh(vertices,indices),null,null);
-        mModelMatrix = Matrix4f.loadIdentity();
         mColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        mTranslation = new Vector3f(0, 0, 0);
+        mScale = new Vector3f(1, 1, 1);
+        mRotation = new Vector3f(0, 0, 0);
     }
 
     private Object3D(Mesh mesh, ShaderProgram shaderProgram, Texture texture){
@@ -43,21 +46,47 @@ public class Object3D {
     }
 
     public void scale( float s ){
-        scale(s,s,s);
+        scale(new Vector3f(s,s,s));
     }
 
-    public void scale( float sx, float sy, float sz ){
-        mModelMatrix.scale(sz, sy, sz);
+    public void scale( Vector3f vector3f ){
+        mScale = vector3f;
     }
 
-    public void translate( float dx, float dy, float dz ){
-        mModelMatrix.translate(dx, dy, dz);
+    public void translate( Vector3f vector3f ){
+        mTranslation = vector3f;
+    }
+
+    public void rotateX( float angle ){
+        mRotation = new Vector3f(angle, mRotation.y(), mRotation.z());
+    }
+
+    public void rotateY( float angle ){
+        mRotation = new Vector3f(mRotation.x(), angle, mRotation.z());
+    }
+
+    public void rotateZ( float angle ){
+        mRotation = new Vector3f(mRotation.x(), mRotation.y(), angle);
+    }
+
+    protected Mesh getMesh(){
+        return mMesh;
+    }
+
+    protected Matrix4f getModelMatrix(){
+        Matrix4f modelMatrix = Matrix4f.loadIdentity();
+        modelMatrix.scale(mScale);
+        modelMatrix.translate(mTranslation);
+        modelMatrix = modelMatrix.rotate(mRotation.x(),new Vector3f(-1.0f,0.0f,0.0f));
+        modelMatrix = modelMatrix.rotate(mRotation.y(),new Vector3f(0.0f,-1.0f,0.0f));
+        modelMatrix = modelMatrix.rotate(mRotation.z(),new Vector3f(0.0f,0.0f,-1.0f));
+        return modelMatrix;
     }
 
     void draw(Renderer renderer) {
         mShader.start();
         mShader.uniformVec4f(ShaderUniform.COLOR, mColor);
-        renderer.draw(mMesh, mShader, mModelMatrix);
+        renderer.drawTriangles(mMesh, mShader, getModelMatrix());
         mShader.stop();
     }
 }

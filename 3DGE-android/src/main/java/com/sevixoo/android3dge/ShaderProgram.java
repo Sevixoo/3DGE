@@ -42,6 +42,11 @@ public class ShaderProgram {
         GLContext.get().uniform4f(handle,value.x(),value.y(),value.z(),value.w());
     }
 
+    public void uniform1f(String name, float value) {
+        int handle = GLContext.get().getUniformLocation(mProgram,name);
+        GLContext.get().uniform1f(handle,value);
+    }
+
     public void uniformMatrix4f(String name, Matrix4f matrix) {
         int handle = GLContext.get().getUniformLocation(mProgram,name);
         GLContext.get().uniformMatrix4fv(handle,matrix.get());

@@ -20,12 +20,12 @@ public class Camera {
         this.mProjectionMatrix = Matrix4f.loadIdentity();
     }
 
-    public void lookAt(Vector3f point){
-
+    public void lookAt(Vector3f point, Vector3f up){
+        mViewMatrix = Matrix4f.lookAt(mPosition,point,up);
     }
 
-    public void projection(){
-
+    public void orthogonalProjection(float left, float right, float top, float bottom, float near, float far){
+        mProjectionMatrix = Matrix4f.ortho(left, right, top, bottom, near, far);
     }
 
     public void setPosition(Vector3f position){

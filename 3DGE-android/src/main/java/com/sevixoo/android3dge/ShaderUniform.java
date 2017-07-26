@@ -7,4 +7,6 @@ package com.sevixoo.android3dge;
 public class ShaderUniform {
     public static final String COLOR = "uColor";
     public static final String MVP_MATRIX = "uMVPmatrix";
+    public static final String POINT_SIZE = "uPointSize";
+
 }

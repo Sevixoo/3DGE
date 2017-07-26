@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mContainer = (LinearLayout)findViewById(R.id.activity_main);
+        mContainer = (LinearLayout)findViewById(R.id.gles_context_holder);
 
         mGLSurfaceView = new GLSurfaceView(getBaseContext());
         mGLSurfaceView.setEGLContextClientVersion(3);

@@ -7,7 +7,9 @@ import com.sevixoo.android3dge.GLContext;
 import com.sevixoo.android3dge.Loader;
 import com.sevixoo.android3dge.Object3D;
 import com.sevixoo.android3dge.Scene;
+import com.sevixoo.android3dge.WavefrontObject;
 import com.sevixoo.android3dge.android.AndroidContext;
+import com.sevixoo.android3dge.math.Vector3f;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,7 +25,7 @@ public class TestRenderer implements GLSurfaceView.Renderer{
 
     private Scene mScene;
 
-    private Object3D mSquareObject;
+    private WavefrontObject mSquareObject;
 
     public TestRenderer(Context mContext, GLSurfaceView surfaceView) {
         this.mContext = mContext;
@@ -38,19 +40,60 @@ public class TestRenderer implements GLSurfaceView.Renderer{
 
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        this.mSquareObject = new Object3D(new float[]{
-                -0.5f,  0.5f, 0.0f,
+        this.mSquareObject = new WavefrontObject(new float[]{
+                /*-0.5f,  0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
-                0.5f,  0.5f, 0.0f
-        }, new short[]{ 0, 1, 2, 0, 2, 3 });
+                0.5f,  0.5f, 0.0f*/
+
+                // front
+                -1.0f, -1.0f,  1.0f,
+                1.0f, -1.0f,  1.0f,
+                1.0f,  1.0f,  1.0f,
+                -1.0f,  1.0f,  1.0f,
+                // back
+                -1.0f, -1.0f, -1.0f,
+                1.0f, -1.0f, -1.0f,
+                1.0f,  1.0f, -1.0f,
+                -1.0f,  1.0f, -1.0f,
+
+
+        }, new short[]{
+                // front
+                0, 1, 2,
+                2, 3, 0,
+                // top
+                1, 5, 6,
+                6, 2, 1,
+                // back
+                7, 6, 5,
+                5, 4, 7,
+                // bottom
+                4, 0, 3,
+                3, 7, 4,
+                // left
+                4, 5, 1,
+                1, 0, 4,
+                // right
+                3, 2, 6,
+                6, 7, 3,
+        });
 
         mScene.addObject(mSquareObject);
-        mSquareObject.scale(0.5f);
-        mSquareObject.translate(0.25f,0.0f,0.0f);
+        //mSquareObject.scale(2.0f);
+        //mSquareObject.translate(new Vector3f(1.25f,0.0f,0.0f));
+        mSquareObject.rotateX(33);
+        mSquareObject.rotateY(45);
+
+
+        mSquareObject.setDrawLines(true);
+        mSquareObject.setDrawTriangles(false);
+        mSquareObject.setDrawPoints(true);
 
         try {
             this.mSquareObject.setShader(mLoader.loadShader("default"));
+            this.mSquareObject.setWavefrontShader(mLoader.loadShader("color"));
+            this.mSquareObject.setPointsShader(mLoader.loadShader("color"));
         }catch (Exception ex){
             ex.printStackTrace();
             throw new RuntimeException(ex);
@@ -59,8 +102,13 @@ public class TestRenderer implements GLSurfaceView.Renderer{
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int w, int h) {
-        mScene.viewport(w,h);
+    public void onSurfaceChanged(GL10 gl10, int width, int height) {
+        mScene.viewport(width,height);
+        float a = (float) width / (float) height;
+        float s = 10;
+        mScene.getCamera().orthogonalProjection(-s*a,s*a,-s*1,s*1,-s*1,s*1);
+        mScene.getCamera().setPosition(new Vector3f(0.0f,0.0f,0.1f));
+        mScene.getCamera().lookAt(new Vector3f(0.0f,0,0),new Vector3f(0f, 1.0f, 0.0f));
     }
 
     @Override
