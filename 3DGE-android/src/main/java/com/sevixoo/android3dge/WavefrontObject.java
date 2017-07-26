@@ -23,8 +23,8 @@ public class WavefrontObject extends Object3D {
     private float mLineSize;
     private Vector4f mLinesColor;
 
-    public WavefrontObject(float[] vertices, short[] indices) {
-        super(vertices, indices);
+    public WavefrontObject(float[] vertices,float[] texture, short[] indices) {
+        super(vertices,texture, indices);
         mPointSize = 8f;
         mPointColor = new Vector4f(1.0f,1.0f,1.0f,1.0f);
         mLineSize = 2;

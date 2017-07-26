@@ -29,6 +29,7 @@ class Renderer {
         gl.bindVertexArray(mesh.getVAOId());
         gl.bindElementsArrayBuffer(mesh.getIndexVBO());
         gl.enableVertexAttribArray(ShaderAttribute.VERTICES);
+        gl.enableVertexAttribArray(ShaderAttribute.TEXTURE_CORDS);
 
         if(shaderProgram != null && mModelMatrix != null) {
             Matrix4f mvpMatrix = mModelMatrix.multiply(mViewMatrix).multiply(mProjectionMatrix);
@@ -43,6 +44,7 @@ class Renderer {
             gl.drawTriangleElements(mesh.getVerticesCount());
         }
 
+        gl.disableVertexAttribArray(ShaderAttribute.TEXTURE_CORDS);
         gl.disableVertexAttribArray(ShaderAttribute.VERTICES);
         gl.bindElementsArrayBuffer(0);
         gl.bindVertexArray(0);

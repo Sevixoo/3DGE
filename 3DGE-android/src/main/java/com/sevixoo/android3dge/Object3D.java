@@ -6,6 +6,8 @@ import com.sevixoo.android3dge.math.Matrix4f;
 import com.sevixoo.android3dge.math.Vector3f;
 import com.sevixoo.android3dge.math.Vector4f;
 
+import javax.microedition.khronos.opengles.GL;
+
 /**
  * Created by seweryn on 22.07.2017.
  */
@@ -24,17 +26,26 @@ public class Object3D {
     //collider
 
     public Object3D(float[] vertices, short[] indices){
+        this(vertices,null,indices);
+    }
+
+    public Object3D(float[] vertices, float[] textureCords, short[] indices ){
         this(new Mesh(vertices,indices),null,null);
-        mColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-        mTranslation = new Vector3f(0, 0, 0);
-        mScale = new Vector3f(1, 1, 1);
-        mRotation = new Vector3f(0, 0, 0);
+        mMesh.storeDataInVertexAttribute(ShaderAttribute.TEXTURE_CORDS, 2, textureCords);
+        mColor = new Vector4f(1.0f,1.0f,1.0f,1.0f);
+        mTranslation = new Vector3f(0.0f,0.0f,0.0f);
+        mRotation = new Vector3f(0.0f,0.0f,0.0f);
+        mScale = new Vector3f(1.0f,1.0f,1.0f);
     }
 
     private Object3D(Mesh mesh, ShaderProgram shaderProgram, Texture texture){
         this.mMesh = mesh;
         this.mTexture = texture;
         this.mShader = shaderProgram;
+    }
+
+    public void setTexture(Texture texture){
+        mTexture = texture;
     }
 
     public void setShader(ShaderProgram mShader){
@@ -83,9 +94,14 @@ public class Object3D {
         return modelMatrix;
     }
 
+
     void draw(Renderer renderer) {
         mShader.start();
         mShader.uniformVec4f(ShaderUniform.COLOR, mColor);
+        if(mTexture!=null) {
+            mTexture.bind(Texture.TEXTURE_0);
+            mShader.uniform1i(ShaderUniform.TEXTURE0, Texture.TEXTURE_0);
+        }
         renderer.drawTriangles(mMesh, mShader, getModelMatrix());
         mShader.stop();
     }

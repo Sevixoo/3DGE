@@ -105,8 +105,9 @@ public class GLContext {
     }
 
     public void clearColor(float r, float g, float b, int a) {
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT|GLES30.GL_DEPTH_BUFFER_BIT);
         GLES30.glClearColor(r, g, b, a);
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST);
     }
 
     public int genVertexArray() {
@@ -203,5 +204,28 @@ public class GLContext {
     public void lineWidth(float width){
         GLES30.glLineWidth(width);
     }
+
+    public void uniform1i(int handle, int value) {
+        GLES30.glUniform1i(handle,value);
+    }
+
+    public void activeTexture2D( int textureNum , int textureId ){
+        int glTexture = 0;
+        switch (textureNum){
+            case 0: glTexture = GLES30.GL_TEXTURE0;break;
+            case 1: glTexture = GLES30.GL_TEXTURE1;break;
+            case 2: glTexture = GLES30.GL_TEXTURE2;break;
+            case 3: glTexture = GLES30.GL_TEXTURE3;break;
+            case 4: glTexture = GLES30.GL_TEXTURE4;break;
+            case 5: glTexture = GLES30.GL_TEXTURE5;break;
+            case 6: glTexture = GLES30.GL_TEXTURE6;break;
+            case 7: glTexture = GLES30.GL_TEXTURE7;break;
+            case 8: glTexture = GLES30.GL_TEXTURE8;break;
+        }
+        GLES30.glActiveTexture ( glTexture );
+        GLES30.glBindTexture ( GLES30.GL_TEXTURE_2D, textureId );
+    }
+
+
 
 }

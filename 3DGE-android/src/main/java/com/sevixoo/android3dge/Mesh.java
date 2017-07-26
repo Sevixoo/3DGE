@@ -35,6 +35,17 @@ class Mesh {
         gl.bindVertexArray(0);
     }
 
+    public void storeDataInVertexAttribute( int attr, int dataUnitSize, float[] data ){
+        GLContext gl = GLContext.get();
+        gl.bindVertexArray(mVAOId);
+        int vbo = gl.genBuffer();
+            gl.bindArrayBuffer(vbo);
+            gl.arrayBufferDataWrite(data);
+            gl.vertexAttribPointerF(attr, dataUnitSize);
+        gl.bindArrayBuffer(0);
+        gl.bindVertexArray(0);
+    }
+
     int getIndexVBO() {
         return mIndexVBO;
     }
