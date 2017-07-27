@@ -1,5 +1,10 @@
-package com.sevixoo.android3dge;
+package com.sevixoo.android3dge.debug;
 
+import com.sevixoo.android3dge.GLContext;
+import com.sevixoo.android3dge.Object3D;
+import com.sevixoo.android3dge.Renderer;
+import com.sevixoo.android3dge.ShaderProgram;
+import com.sevixoo.android3dge.ShaderUniform;
 import com.sevixoo.android3dge.math.Vector4f;
 
 /**
@@ -40,7 +45,7 @@ public class WavefrontObject extends Object3D {
     }
 
     @Override
-    void draw(Renderer renderer) {
+    protected void draw(Renderer renderer) {
         GLContext gl = GLContext.get();
 
         if(mDrawTriangles) {

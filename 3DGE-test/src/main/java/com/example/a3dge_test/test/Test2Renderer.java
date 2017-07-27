@@ -1,4 +1,4 @@
-package com.example.a3dge_test;
+package com.example.a3dge_test.test;
 
 import android.content.Context;
 import android.opengl.GLES30;

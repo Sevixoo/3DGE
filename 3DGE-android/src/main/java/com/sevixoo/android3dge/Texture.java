@@ -20,6 +20,9 @@ public class Texture {
     public static final int TEXTURE_7 = 7;
     public static final int TEXTURE_8 = 8;
 
+    public static final int FILTER_NEAREST = 1;
+    public static final int FILTER_LINEAR = 2;
+
     private int mTextureId;
 
     public Texture(byte[] pixels, int width, int height){
@@ -50,4 +53,22 @@ public class Texture {
         GLContext gl = GLContext.get();
         gl.activeTexture2D( textureNum , mTextureId );
     }
+
+    private int getFilterType(int type){
+        switch (type){
+            case FILTER_LINEAR:return GLES30.GL_LINEAR;
+            case FILTER_NEAREST:return GLES30.GL_NEAREST;
+        }
+        return 0;
+    }
+
+    public void setMagFilter( int filterType ){
+        GLES30.glTexParameteri ( GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, getFilterType(filterType) );
+    }
+
+    public void setMinFilter( int filterType ){
+        GLES30.glTexParameteri ( GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, getFilterType(filterType) );
+    }
+
+
 }

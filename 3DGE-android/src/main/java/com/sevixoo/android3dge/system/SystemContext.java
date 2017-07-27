@@ -1,4 +1,4 @@
-package com.sevixoo.android3dge.android;
+package com.sevixoo.android3dge.system;
 
 import java.io.IOException;
 
@@ -9,6 +9,8 @@ import java.io.IOException;
 public abstract class SystemContext {
 
     public abstract String loadFile( String path ) throws IOException;
+
+
 
     public abstract boolean isGLES30Supported();
 

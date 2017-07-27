@@ -12,16 +12,19 @@ public class Camera {
     private Vector3f mPosition;
 
     private Matrix4f mProjectionMatrix;
-    private Matrix4f mViewMatrix;
+
+    private Vector3f mCenter;
+    private Vector3f mUp;
 
     Camera() {
         this.mPosition = new Vector3f(0,0,0);
-        this.mViewMatrix = Matrix4f.loadIdentity();
         this.mProjectionMatrix = Matrix4f.loadIdentity();
+        lookAt(new Vector3f(0,0,0),new Vector3f(0,1,0) );
     }
 
     public void lookAt(Vector3f point, Vector3f up){
-        mViewMatrix = Matrix4f.lookAt(mPosition,point,up);
+        mCenter = point;
+        mUp = up;
     }
 
     public void orthogonalProjection(float left, float right, float top, float bottom, float near, float far){
@@ -36,8 +39,12 @@ public class Camera {
         return mPosition;
     }
 
+    public Vector3f getCenter(){
+        return mCenter;
+    }
+
     public Matrix4f getViewMatrix() {
-        return mViewMatrix;
+        return Matrix4f.lookAt(mPosition,mCenter,mUp);
     }
 
     public Matrix4f getProjectionMatrix() {

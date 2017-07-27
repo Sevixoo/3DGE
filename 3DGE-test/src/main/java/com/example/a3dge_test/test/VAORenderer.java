@@ -1,4 +1,4 @@
-package com.example.a3dge_test;
+package com.example.a3dge_test.test;
 
 /**
  * Created by seweryn on 25.07.2017.

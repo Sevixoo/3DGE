@@ -3,12 +3,13 @@ package com.example.a3dge_test;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
+import com.sevixoo.android3dge.debug.CameraManipulator;
+import com.sevixoo.android3dge.system.Device;
 import com.sevixoo.android3dge.GLContext;
 import com.sevixoo.android3dge.Loader;
-import com.sevixoo.android3dge.Object3D;
+import com.sevixoo.android3dge.debug.ObjectManipulator;
 import com.sevixoo.android3dge.Scene;
-import com.sevixoo.android3dge.Texture;
-import com.sevixoo.android3dge.WavefrontObject;
+import com.sevixoo.android3dge.debug.WavefrontObject;
 import com.sevixoo.android3dge.android.AndroidContext;
 import com.sevixoo.android3dge.math.Vector3f;
 
@@ -27,12 +28,16 @@ public class TestRenderer implements GLSurfaceView.Renderer{
     private Scene mScene;
 
     private WavefrontObject mSquareObject;
+    private ObjectManipulator mObjectManipulator;
+    private CameraManipulator mCameraManipulator;
 
-    public TestRenderer(Context mContext, GLSurfaceView surfaceView) {
-        this.mContext = mContext;
+    public TestRenderer(Context applicationContext, GLSurfaceView surfaceView, ObjectManipulator mObjectManipulator, CameraManipulator cameraManipulator) {
+        this.mContext = applicationContext;
         this.mGLSurfaceView = surfaceView;
         this.mScene = new Scene();
         this.mLoader = new Loader(new AndroidContext(mContext));
+        this.mObjectManipulator = mObjectManipulator;
+        this.mCameraManipulator = cameraManipulator;
     }
 
     @Override
@@ -41,20 +46,23 @@ public class TestRenderer implements GLSurfaceView.Renderer{
 
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        this.mSquareObject = new WavefrontObject( mSquareVertices, mTextureMapping, mSquareIndices );
+        //this.mSquareObject = new WavefrontObject( mSquareVertices, mTextureMapping, mSquareIndices );
+        this.mSquareObject = new WavefrontObject( mCubeVertices, mTextureMapping, mCubeIndices );
 
         mScene.addObject(mSquareObject);
-        //mSquareObject.scale(2.0f);
+        mSquareObject.scale(0.6f);
         //mSquareObject.translate(new Vector3f(1.25f,0.0f,0.0f));
         //mSquareObject.rotateX(33);
         //mSquareObject.rotateY(45);
 
         mSquareObject.setDrawLines(true);
-        mSquareObject.setDrawTriangles(true);
+        mSquareObject.setDrawTriangles(false);
         mSquareObject.setDrawPoints(true);
 
+        mSquareObject.setPointsSize(15f);
+
         try {
-            this.mSquareObject.setShader(mLoader.loadShader("texture"));
+            this.mSquareObject.setShader(mLoader.loadShader("color"));
             this.mSquareObject.setWavefrontShader(mLoader.loadShader("color"));
             this.mSquareObject.setPointsShader(mLoader.loadShader("color"));
         }catch (Exception ex){
@@ -62,23 +70,31 @@ public class TestRenderer implements GLSurfaceView.Renderer{
             throw new RuntimeException(ex);
         }
 
-        Texture mTexture = new Texture(mSampleTexture, 2, 2);
-        mSquareObject.setTexture(mTexture);
+        mObjectManipulator.setTarget(mSquareObject);
 
+        /*Texture mTexture = new Texture(mSampleTexture, 2, 2);
+        mTexture.setMagFilter(Texture.FILTER_NEAREST);
+        mTexture.setMinFilter(Texture.FILTER_NEAREST);
+        mSquareObject.setTexture(mTexture);*/
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
+        Device.mHeight = height;
+        Device.mWidth = width;
         mScene.viewport(width,height);
         float a = (float) width / (float) height;
         float s = 2;
         mScene.getCamera().orthogonalProjection(-s*a,s*a,-s*1,s*1,-s*1,s*1);
         mScene.getCamera().setPosition(new Vector3f(0.0f,0.0f,0.1f));
         mScene.getCamera().lookAt(new Vector3f(0.0f,0,0),new Vector3f(0f, 1.0f, 0.0f));
+        mCameraManipulator.setTarget(mScene.getCamera());
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
+        mObjectManipulator.onUpdate();
+        mCameraManipulator.onUpdate();
         mScene.clearColor();
         mScene.display();
     }

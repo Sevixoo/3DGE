@@ -1,14 +1,12 @@
 package com.sevixoo.android3dge;
 
-import android.opengl.GLES30;
-
 import com.sevixoo.android3dge.math.Matrix4f;
 
 /**
  * Created by seweryn on 25.07.2017.
  */
 
-class Renderer {
+public class Renderer {
 
     private static final int DRAW_LINES = 2;
     private static final int DRAW_POINTS = 1;
@@ -50,19 +48,19 @@ class Renderer {
         gl.bindVertexArray(0);
     }
 
-    void drawTriangles(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+    public void drawTriangles(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
         draw(mesh,shaderProgram,mModelMatrix,DRAW_TRIANGLES);
     }
 
-    void drawLines(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+    public void drawLines(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
         draw(mesh,shaderProgram,mModelMatrix,DRAW_LINES);
     }
 
-    void drawPoints(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
+    public void drawPoints(Mesh mesh, ShaderProgram shaderProgram, Matrix4f mModelMatrix){
         draw(mesh,shaderProgram,mModelMatrix,DRAW_POINTS);
     }
 
-    void drawTriangles(Mesh mesh){
+    public void drawTriangles(Mesh mesh){
         drawTriangles(mesh,null,null);
     }
 

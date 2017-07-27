@@ -226,6 +226,26 @@ public class GLContext {
         GLES30.glBindTexture ( GLES30.GL_TEXTURE_2D, textureId );
     }
 
+    public static final int TEXTURE_WRAP_REPEAT = 1;
+    public static final int TEXTURE_WRAP_CLAMP_TO_EDGE = 2;
+    public static final int TEXTURE_WRAP_MIRRORED_REPEAT = 3;
+
+    private int wrapType(int type){
+        switch (type){
+            case TEXTURE_WRAP_REPEAT:return GLES30.GL_REPEAT;
+            case TEXTURE_WRAP_CLAMP_TO_EDGE:return GLES30.GL_CLAMP_TO_EDGE;
+            case TEXTURE_WRAP_MIRRORED_REPEAT:return GLES30.GL_MIRRORED_REPEAT;
+        }
+        return 0;
+    }
+
+    public void textParameterWrap_S( int type ){
+        GLES30.glTexParameteri ( GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, wrapType(type) );
+    }
+
+    public void textParameterWrap_T( int type ){
+        GLES30.glTexParameteri ( GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, wrapType(type) );
+    }
 
 
 }

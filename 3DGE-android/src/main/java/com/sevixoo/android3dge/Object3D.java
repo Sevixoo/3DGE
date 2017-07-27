@@ -1,12 +1,8 @@
 package com.sevixoo.android3dge;
 
-import android.opengl.GLES30;
-
 import com.sevixoo.android3dge.math.Matrix4f;
 import com.sevixoo.android3dge.math.Vector3f;
 import com.sevixoo.android3dge.math.Vector4f;
-
-import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by seweryn on 22.07.2017.
@@ -72,6 +68,18 @@ public class Object3D {
         mRotation = new Vector3f(angle, mRotation.y(), mRotation.z());
     }
 
+    public Vector3f getScale(){
+        return mScale;
+    }
+
+    public Vector3f getRotation(){
+        return mRotation;
+    }
+
+    public Vector3f getTranslation(){
+        return mTranslation;
+    }
+
     public void rotateY( float angle ){
         mRotation = new Vector3f(mRotation.x(), angle, mRotation.z());
     }
@@ -87,19 +95,22 @@ public class Object3D {
     protected Matrix4f getModelMatrix(){
         Matrix4f modelMatrix = Matrix4f.loadIdentity();
         modelMatrix.scale(mScale);
-        modelMatrix.translate(mTranslation);
         modelMatrix = modelMatrix.rotate(mRotation.x(),new Vector3f(-1.0f,0.0f,0.0f));
         modelMatrix = modelMatrix.rotate(mRotation.y(),new Vector3f(0.0f,-1.0f,0.0f));
         modelMatrix = modelMatrix.rotate(mRotation.z(),new Vector3f(0.0f,0.0f,-1.0f));
+        modelMatrix.translate(mTranslation);
         return modelMatrix;
     }
 
 
-    void draw(Renderer renderer) {
+    protected void draw(Renderer renderer) {
+        GLContext gl = GLContext.get();
         mShader.start();
         mShader.uniformVec4f(ShaderUniform.COLOR, mColor);
         if(mTexture!=null) {
             mTexture.bind(Texture.TEXTURE_0);
+            gl.textParameterWrap_S(GLContext.TEXTURE_WRAP_REPEAT);
+            gl.textParameterWrap_T(GLContext.TEXTURE_WRAP_CLAMP_TO_EDGE);
             mShader.uniform1i(ShaderUniform.TEXTURE0, Texture.TEXTURE_0);
         }
         renderer.drawTriangles(mMesh, mShader, getModelMatrix());
